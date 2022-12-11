@@ -1,11 +1,17 @@
 #!/usr/bin/make
 
 CXXFLAGS := -O3 -g -std=c++17
-CXXSRCS := main.cpp
 
-.PHONY: all clean
+.PHONY: all clean test
 
 all: aoc2022
+test: aoc2022-test
 
-aoc2022: $(CXXSRCS) $(wildcard *.h)
-	$(CXX) $(CXXFLAGS) -o $@ $(CXXSRCS)
+clean:
+	$(RM) aoc2022 aoc2022-test
+
+aoc2022: main.cpp $(wildcard *.h)
+	$(CXX) $(CXXFLAGS) -o $@ main.cpp
+
+aoc2022-test: test.cpp $(wildcard *.h)
+	$(CXX) $(CXXFLAGS) -o $@ test.cpp
