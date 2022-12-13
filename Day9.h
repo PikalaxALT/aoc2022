@@ -9,39 +9,7 @@
 #include <iostream>
 #include <unordered_set>
 #include "Solution.h"
-
-namespace aoc2022 {
-
-    struct CoordI2 {
-        int x, y;
-
-        bool operator==(const CoordI2 &rhs) const {
-            return x == rhs.x && y == rhs.y;
-        }
-
-        friend CoordI2 operator+(CoordI2 lhs, const CoordI2 &rhs) {
-            return {lhs.x + rhs.x, lhs.y + rhs.y};
-        }
-
-        friend CoordI2 operator-(CoordI2 lhs, const CoordI2 &rhs) {
-            return {lhs.x - rhs.x, lhs.y - rhs.y};
-        }
-
-        CoordI2 &operator+=(const CoordI2 &rhs) {
-            x += rhs.x;
-            y += rhs.y;
-            return *this;
-        }
-    };
-}
-
-template<> struct std::hash<aoc2022::CoordI2> {
-    unsigned long long operator()(const aoc2022::CoordI2& obj) const {
-        std::hash<int> int_hasher {};
-        unsigned long long xhash = int_hasher(obj.x), yhash = int_hasher(obj.y);
-        return (xhash << 1) ^ yhash;
-    }
-};
+#include "Coord2.h"
 
 namespace aoc2022 {
     template <std::size_t ropelen>
