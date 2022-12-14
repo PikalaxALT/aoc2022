@@ -14,6 +14,7 @@
 #include "Day11.h"
 #include "Day12.h"
 #include "Day13.h"
+#include "Day14.h"
 
 template <typename S>
 int run_solution(const int& day, const int& part, const S& filename) {
@@ -117,13 +118,13 @@ int run_solution(const int& day, const int& part, const S& filename) {
         case 2:
             return aoc2022::Day12Part2(filename)();
         }
-    case 13:
+    case 14:
         switch (part) {
         default:
         case 1:
-            return aoc2022::Day13Part1(filename)();
+            return aoc2022::Day14Part1(filename)();
         case 2:
-            return aoc2022::Day13Part2(filename)();
+            return aoc2022::Day14Part2(filename)();
         }
     }
 }

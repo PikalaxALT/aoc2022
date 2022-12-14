@@ -46,6 +46,22 @@ namespace aoc2022 {
             }
             return x < rhs.x;
         }
+
+        template <typename Scalar>
+        Coord2 operator/(const Scalar& rhs) const {
+            return {
+                x / rhs,
+                y / rhs
+            };
+        }
+
+        template <typename Scalar>
+        Coord2 operator*(const Scalar& rhs) const {
+            return {
+                x * rhs,
+                y * rhs
+            };
+        }
     };
 
     using CoordI2 = Coord2<int>;
