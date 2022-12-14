@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <climits>
 #include "Solution.h"
 
 namespace aoc2022 {

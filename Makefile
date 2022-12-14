@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-CXXFLAGS := -O3 -g -std=c++17
+CXXFLAGS := -O3 -g -std=c++20
 
 .PHONY: all clean test
 

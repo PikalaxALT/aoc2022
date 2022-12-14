@@ -6,6 +6,8 @@ Header file `Solution.h` defines the abstract base class for each day's solution
 
 All solutions are included in `main.cpp`, and the specific solution to run is chosen by the two positional arguments. To compile the executable, called `aoc2022`, run `make`.
 
+This project uses the c++20 standard. Your default compiler may not support this. To switch to one that does, define it via `CXX=...` in the `make` command.
+
 #### Usage
 
 ```bash
