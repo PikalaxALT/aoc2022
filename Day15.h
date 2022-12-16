@@ -20,63 +20,50 @@ namespace aoc2022 {
     struct Sensor {
         Coord2<long long> pos;
         Coord2<long long> beacon;
-        int mindist;
+        long long mindist;
         Sensor() = default;
         Sensor(Coord2<long long> const& pos, Coord2<long long> const& beacon) : pos(pos), beacon(beacon) {
             mindist = pos.l1dist(beacon);
         }
-        Sensor(const int& sx, const int& sy, const int& bx, const int& by) : Sensor({sx, sy}, {bx, by}) {}
+        Sensor(const long long& sx, const long long& sy, const long long& bx, const long long& by) : Sensor({sx, sy}, {bx, by}) {}
     };
 
     class Day15 : public Solution {
-        std::mt19937 rng;
     protected:
         std::vector<Sensor> sensors;
-        int x0 = INT_MAX, x1 = INT_MIN, y0 = INT_MAX, y1 = INT_MIN;
-        template <typename T> const T& choose(std::vector<T> const& v) {
-            return v[std::uniform_int_distribution<std::size_t>{0, v.size() - 1}(rng)];
-        }
-        Coord2<long long> randomPos(const int& xm, const int& xM, const int& ym, const int& yM) {
-            std::uniform_int_distribution xroll{xm, xM}, yroll{ym, yM};
-            return {
-                xroll(rng),
-                yroll(rng)
-            };
-        }
+        long long x0 = INT64_MAX, x1 = INT64_MIN, y0 = INT64_MAX, y1 = INT64_MIN;
         void read_sensors() {
             while (readline()) {
                 std::size_t pos1 = line.find('=');
                 std::size_t pos2 = line.find(',', pos1 + 1);
-                int sx = std::stoi(line.substr(pos1 + 1, pos2 - pos1 - 1));
+                long long sx = std::stoll(line.substr(pos1 + 1, pos2 - pos1 - 1));
                 pos1 = line.find('=', pos2 + 1);
                 pos2 = line.find(':', pos1 + 1);
-                int sy = std::stoi(line.substr(pos1 + 1, pos2 - pos1 - 1));
+                long long sy = std::stoll(line.substr(pos1 + 1, pos2 - pos1 - 1));
                 pos1 = line.find('=', pos2 + 1);
                 pos2 = line.find(',', pos1 + 1);
-                int bx = std::stoi(line.substr(pos1 + 1, pos2 - pos1 - 1));
+                long long bx = std::stoll(line.substr(pos1 + 1, pos2 - pos1 - 1));
                 pos1 = line.find('=', pos2 + 1);
-                int by = std::stoi(line.substr(pos1 + 1));
-                sensors.emplace_back(sx, sy, bx, by);
+                long long by = std::stoll(line.substr(pos1 + 1));
+                Sensor const& sensor = sensors.emplace_back(sx, sy, bx, by);
+                x0 = std::min(sx - sensor.mindist, x0);
+                x1 = std::max(sx + sensor.mindist, x1);
             }
-        }
-        int findNearestSensor(const Coord2<long long>& testpos, Sensor& dest) const {
-            int m = INT_MAX;
-            for (const Sensor& sensor : sensors) {
-                int dist = sensor.pos.l1dist(testpos);
-                if (dist <= sensor.mindist && dist < m) {
-                    m = dist;
-                    dest = sensor;
-                } 
-            }
-            return m;
         }
         [[nodiscard]] bool maybeBeacon(const Coord2<long long>& testpos, bool allowDetected = true) const {
-            Sensor sensor {};
-            int dist = findNearestSensor(testpos, sensor);
-            return dist != INT_MAX || (allowDetected && testpos == sensor.beacon);
+            for (const Sensor& sensor : sensors) {
+                if (allowDetected && testpos == sensor.beacon) {
+                    return true;
+                }
+                long long dist = sensor.pos.l1dist(testpos);
+                if (dist <= sensor.mindist) {
+                    return false;
+                }
+            }
+            return true;
         }
     public:
-        template <class S> explicit Day15(const S& fname) : Solution(fname), rng(std::random_device{}()) {}
+        template <class S> explicit Day15(const S& fname) : Solution(fname) {}
     };
 
     class Day15Part1 : public Day15 {
@@ -85,9 +72,8 @@ namespace aoc2022 {
 
         int operator()() override {
             read_sensors();
-            constexpr int ytest = 2000000;
             int excludedPos = 0;
-            Coord2<long long> testpos {x0, ytest};
+            Coord2<long long> testpos {x0, 2000000};
             for (long long& x = testpos.x; x != x1; ++x) {
                 if (!maybeBeacon(testpos)) {
                     ++excludedPos;
@@ -103,13 +89,12 @@ namespace aoc2022 {
             // For each sensor, walk the perimeter of its range until an uncovered point is found.
             Coord2<long long> testpos {};
 
-            for (int dist = 1;; ++dist) {
+            for (long long dist = 1;; ++dist) {
                 for (const Sensor& sensor : sensors) {
-                    Sensor buf {};
                     testpos = {sensor.pos.x - sensor.mindist - dist, sensor.pos.y};
                     while (testpos.x != sensor.pos.x) {
                         if (testpos.x >= 0 && testpos.x <= 4000000 && testpos.y >= 0 && testpos.y <= 4000000) {
-                            if (findNearestSensor(testpos, buf) == INT_MAX) {
+                            if (maybeBeacon(testpos, false)) {
                                 return testpos;
                             }
                         }
@@ -118,7 +103,7 @@ namespace aoc2022 {
                     }
                     while (testpos.y != sensor.pos.y) {
                         if (testpos.x >= 0 && testpos.x <= 4000000 && testpos.y >= 0 && testpos.y <= 4000000) {
-                            if (findNearestSensor(testpos, buf) == INT_MAX) {
+                            if (maybeBeacon(testpos, false)) {
                                 return testpos;
                             }
                         }
@@ -127,7 +112,7 @@ namespace aoc2022 {
                     }
                     while (testpos.x != sensor.pos.x) {
                         if (testpos.x >= 0 && testpos.x <= 4000000 && testpos.y >= 0 && testpos.y <= 4000000) {
-                            if (findNearestSensor(testpos, buf) == INT_MAX) {
+                            if (maybeBeacon(testpos, false)) {
                                 return testpos;
                             }
                         }
@@ -136,7 +121,7 @@ namespace aoc2022 {
                     }
                     while (testpos.y != sensor.pos.y) {
                         if (testpos.x >= 0 && testpos.x <= 4000000 && testpos.y >= 0 && testpos.y <= 4000000) {
-                            if (findNearestSensor(testpos, buf) == INT_MAX) {
+                            if (maybeBeacon(testpos, false)) {
                                 return testpos;
                             }
                         }

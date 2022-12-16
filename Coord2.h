@@ -63,7 +63,7 @@ namespace aoc2022 {
             };
         }
         
-        int l1dist(const Coord2& rhs) const {
+        T l1dist(const Coord2& rhs) const {
             return std::abs(rhs.x - x) + std::abs(rhs.y - y);
         }
     };
