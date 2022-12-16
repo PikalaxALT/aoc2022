@@ -10,7 +10,7 @@ int main(int argc, char ** argv) {
     for (int i = 1; i <= 25; ++i) {
         for (int j = 1; j <= 2; ++j) {
             std::cout << "Day " << i << " part " << j << "\n";
-            if (run_solution(i, j, this_dir / "test_inputs" / ("Day" + std::to_string(i) + ".txt"))) {
+            if (aoc2022::run_solution(i, j, this_dir / "test_inputs" / ("Day" + std::to_string(i) + ".txt"))) {
                 std::cerr << "error\n";
                 return 1;
             }

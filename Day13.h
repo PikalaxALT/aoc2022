@@ -73,26 +73,34 @@ namespace aoc2022 {
             }
         }
         
-        std::strong_ordering operator<=>(const Packet& rhs) const {
+        int compare(const Packet& rhs) const {
             if (type == PacketType::INT && rhs.type == PacketType::INT) {
-                return number <=> rhs.number;
+                return number - rhs.number;
             } else if (type == PacketType::LIST && rhs.type == PacketType::INT) {
-                return *this <=> Packet(PacketType::LIST, rhs.number);
+                return this->compare(Packet(PacketType::LIST, rhs.number));
             } else if (type == PacketType::INT && rhs.type == PacketType::LIST) {
-                return Packet(PacketType::LIST, number) <=> rhs;
+                return Packet(PacketType::LIST, number).compare(rhs);
             } else {
                 const std::vector<Packet>& listl = *list, &listr = *rhs.list;
                 for (std::size_t i = 0; i < listl.size(); ++i) {
                     if (i >= listr.size()) {
-                        return std::strong_ordering::greater;
+                        return 1;
                     }
-                    std::strong_ordering result = listl[i] <=> listr[i];
-                    if (result != std::strong_ordering::equal) {
+                    int result = listl[i].compare(listr[i]);
+                    if (result != 0) {
                         return result;
                     }
                 }
-                return listl.size() <=> listr.size();
+                return listl.size() - listr.size();
             }
+        }
+        
+        bool operator<(const Packet& rhs) const {
+            return compare(rhs) < 0;
+        }
+        
+        bool operator==(const Packet& rhs) const {
+            return compare(rhs) == 0;
         }
         
         friend std::ostream& operator<<(std::ostream& strm, Packet const& self) {
@@ -140,7 +148,7 @@ namespace aoc2022 {
 
     class Day13Part2 : public Solution {
         std::vector<Packet> packets;
-        Packet make_divider(int value) {
+        static Packet make_divider(int value) {
             Packet packet {PacketType::LIST};
             packet.list->emplace_back(PacketType::LIST, value);
             return packet;
@@ -160,7 +168,7 @@ namespace aoc2022 {
             std::sort(packets.begin(), packets.end());
             int result = 1, i = 1;
             for (const Packet& packet : packets) {
-                if (packet <=> div2 == std::strong_ordering::equal || packet <=> div6 == std::strong_ordering::equal) {
+                if (packet == div2 || packet == div6) {
                     result *= i;
                 }
                 ++i;

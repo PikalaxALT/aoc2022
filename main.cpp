@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
         return 1;
     }
     try {
-        return run_solution(day, part, filename);
+        return aoc2022::run_solution(day, part, filename);
     } catch (io_failure const& e) {
         std::cerr << filename << ": no such file or directory" << std::endl;
         return 1;

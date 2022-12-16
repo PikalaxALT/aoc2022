@@ -62,6 +62,10 @@ namespace aoc2022 {
                 y * rhs
             };
         }
+        
+        int l1dist(const Coord2& rhs) const {
+            return std::abs(rhs.x - x) + std::abs(rhs.y - y);
+        }
     };
 
     using CoordI2 = Coord2<int>;
